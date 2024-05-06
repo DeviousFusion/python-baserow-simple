@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import Any, Dict
 
 import requests
+import re
 
 
 def load_token(token_path):
@@ -155,7 +156,10 @@ class BaserowApi:
             raise RuntimeError(f"Could not get data from {url}")
 
         if data["next"]:
-            return data["results"] + self._get_data(data["next"])
+            pattern = r'http://'
+            converted_url = re.sub(pattern, 'https://', data["next"])
+            # print(converted_url)
+            return data["results"] + self._get_data(converted_url)
         return data["results"]
 
     def get_fields(self, table_id):
